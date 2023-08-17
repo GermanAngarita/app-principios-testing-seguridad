@@ -1,9 +1,12 @@
 'use strict'
 const express = require('express');
+const dnsPrefetchControl = require('dns-prefetch-control')
+
 const { multiplicar, suma } = require('./functions.js');
 const app = express();
 const port = 3001;
 
+app.use(dnsPrefetchControl({ allow: true }))
 app.use( express.json() )
 app.get('/', (req, res ) => {
     res.status(200).send({
