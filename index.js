@@ -8,7 +8,9 @@ const port = 3001;
 
 app.use(dnsPrefetchControl({ allow: false }))
 app.use( express.json() )
+
 app.get('/', (req, res ) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(200).send({
         estatus: 'ok',
         code: 200
@@ -16,7 +18,7 @@ app.get('/', (req, res ) => {
 })
 
 app.get('/suma', ( req, res) => {
-    
+    res.setHeader("Access-Control-Allow-Origin", "*");
     try {
         const resultado = suma( req.query.a, req.query.b );
         console.log('resultado: ', resultado)
@@ -28,7 +30,6 @@ app.get('/suma', ( req, res) => {
         })
     } catch (error) {
         console.log('error: ', error)
-
         return res.status(400).send({
             estatus: true,
             code: 400,
@@ -41,7 +42,7 @@ app.get('/suma', ( req, res) => {
 })
 
 app.get('/multiplicar', ( req, res) => {
-    
+    res.setHeader("Access-Control-Allow-Origin", "*");
     try {
         const resultado = multiplicar( req.query.a, req.query.b );
         
