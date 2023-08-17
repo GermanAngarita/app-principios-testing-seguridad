@@ -1,25 +1,33 @@
 'use strict'
 const express = require('express');
 const dnsPrefetchControl = require('dns-prefetch-control');
-const referrerPolicy = require('referrer-policy')
+const referrerPolicy = require('referrer-policy');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 
 const { multiplicar, suma } = require('./functions.js');
 const app = express();
 const port = 3001;
+const csrfProtection = csrf({ cookie: true });
+let parseForm = bodyParser.urlencoded({ extended: false });
 
+app.use(cookieParser());
 app.use(dnsPrefetchControl({ allow: false }));
 app.use(referrerPolicy({ policy: 'same-origin' }))
 app.use( express.json() )
+app.use( express.urlencoded() )
 
-app.get('/', (req, res ) => {
+app.get('/', csrfProtection, (req, res ) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.status(200).send({
         estatus: 'ok',
-        code: 200
+        code: 200,
+        csrToken: req.csrfToken()
     })
 })
 
-app.get('/suma', ( req, res) => {
+app.get('/suma', parseForm, csrfProtection, ( req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     try {
         const resultado = suma( req.query.a, req.query.b );
@@ -43,7 +51,7 @@ app.get('/suma', ( req, res) => {
     
 })
 
-app.get('/multiplicar', ( req, res) => {
+app.get('/multiplicar', parseForm, csrfProtection, ( req, res) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     try {
         const resultado = multiplicar( req.query.a, req.query.b );
